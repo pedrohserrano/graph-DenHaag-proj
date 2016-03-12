@@ -1,6 +1,6 @@
 # graph-thehague
-##Graph Analytics - The Hague Crime
+###Graph Analytics - The Hague Crime
 
--Eliza Hernández
--Alfredo Méndez
--Pedro Hernández
+- Eliza Hernández
+- Alfredo Méndez
+- Pedro Hernández
