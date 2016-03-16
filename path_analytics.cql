@@ -62,6 +62,13 @@ path = shortestPath((from)-[:TO*]->(to))
 WITH REDUCE(dist = 0, rel in rels(path) | dist + toInt(rel.dist)) AS distance, path
 RETURN path, distance
 
+#SOLO ORIGEN DIJKSTRA
+MATCH (from: MyNode {Name:'A'}), (to: MyNode),
+path = shortestPath((from)-[:TO*]->(to))
+WITH REDUCE(dist = 0, rel in rels(path) | dist + toInt(rel.dist)) AS distance, path, from, to
+RETURN from, to, path, distance order by distance desc
+
+
 #Find the degree of all nodes
 match (n:MyNode)-[r]-()
 return n.Name, count(distinct r) as degree
