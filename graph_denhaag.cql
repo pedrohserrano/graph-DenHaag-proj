@@ -67,7 +67,7 @@ MERGE (a)<-[:had]-(o)
 
 
 #CARGA Y DEFINICIÓN DE LOS NODOS Y LAS RELACIONES
-LOAD CSV WITH HEADERS FROM "file:///home/pedrohserrano/den_haag_sample.csv" AS table
+LOAD CSV WITH HEADERS FROM "https://github.com/pedrohserrano/graph-thehague/blob/master/den_haag_sample.csv" AS table
 MERGE (o:Zone {
 Name: table.obu_naam,
 Offenders: toInt(table.ooffenders0),
@@ -80,7 +80,7 @@ MERGE (r:Reg {Name: table.owk_name})
 MERGE (y:Year {Name: toInt(table.year)})
 MERGE (o)-[:Move_to {dist: toInt(table.migra0)}]->(d)
 MERGE (o)-[:Belong]->(r)
-MERGE (r)-[:Crime {Orig: toInt(table.ocrimes0), Dest: toInt(table.dcrimes0)}]-(y)
+MERGE (r)-[:Crime {Orig: toInt(table.Crim_o), Dest: toInt(table.Crim_d)}]-(y)
 
 
 ##PRUEBA DE UN SEGUNDO GRAFO
@@ -97,10 +97,10 @@ MERGE (r:Reg {Name: table.owk_name})
 MERGE (y:Year {Name: toInt(table.year)})
 MERGE (o)-[:Move_to {dist: toInt(table.migra0)}]->(d)
 MERGE (o)-[:Belong]->(r)
-MERGE (r)-[:Crime {Orig: toInt(table.ocrimes0), Dest: toInt(table.dcrimes0)}]-(y)
+MERGE (r)-[:Crime {Orig: toInt(table.Crim_o), Dest: toInt(table.Crim_d)}]-(y)
 
 ##MERGE (r:Reg)-[:Move_reg {dist_reg: toInt(table.migra0)}]->(r:Reg)
-
+https://github.com/pedrohserrano/graph-thehague/blob/master/den_haag_sample.csv
 
 
 
