@@ -66,7 +66,7 @@ MERGE (o)-[:move_to {dist:line.distance}]->(d)
 MERGE (a)<-[:had]-(o)
 
 
-#ESHTA
+#CARGA Y DEFINICIÓN DE LOS NODOS Y LAS RELACIONES
 LOAD CSV WITH HEADERS FROM "file:///home/pedrohserrano/den_haag_sample.csv" AS table
 MERGE (o:Zone {
 Name: table.obu_naam,
@@ -82,7 +82,6 @@ MERGE (o)-[:Move_to {dist: toInt(table.migra0)}]->(d)
 MERGE (o)-[:Belong]->(r)
 MERGE (r)-[:Crime {Orig: toInt(table.ocrimes0), Dest: toInt(table.dcrimes0)}]-(y)
 
-##MERGE (r:Reg)-[:Move_reg {dist_reg: toInt(table.migra0)}]->(r:Reg)
 
 ##PRUEBA DE UN SEGUNDO GRAFO
 LOAD CSV WITH HEADERS FROM "file:///home/pedrohserrano/den_haag_sample.csv" AS table
@@ -204,6 +203,92 @@ path = shortestPath((n)-[*]->(m))
 WITH REDUCE(dist = 0, rel in rels(path) | dist + toInt(rel.dist)) AS distance, path, n, m
 RETURN n, m, path, distance
 ORDER BY distance desc
+
+##EL EXGRADO DE LOS NODOS ZONA
+MATCH (n:Zone)-[r:Move_to]->()
+RETURN n.Name as Node, count(r) as Outdegree
+ORDER BY Outdegree DESC
+UNION
+MATCH (a:Zone)-[r:Move_to]->(leaf)
+WHERE not((leaf)-->())
+RETURN leaf.Name as Node, 0 as Outdegree
+
+Venen/Oorden/Raden	8
+Houtwijk	8
+Kortenbos	8
+Bezuidenhout-Oost	8
+Groente- en Fruitmarkt	8
+Valkenboskwartier	8
+Leyenburg	8
+Heesterbuurt	8
+Rond de Energiecentrale	8
+
+
+##EL INGRADO DE TODOS LOS NODOS
+MATCH (n:Zone)<-[r:Move_to]-()
+RETURN n.Name as Node, count(r) as Indegree
+ORDER BY Indegree DESC
+UNION
+MATCH (a:Zone)<-[r:Move_to]-(root)
+WHERE not((root)<--())
+RETURN root.Name as Node, 0 as Indegree
+
+Houtwijk	10
+Landen	9
+Morgenstond-West	9
+Bomenbuurt	9
+Oostbroek-Zuid	9
+Laakkwartier-Oost	9
+Zuidwal	9
+
+##EL GRADO TOTAL
+MATCH (n:Zone)-[r]-()
+RETURN n.Name, count(distinct r) as Degree
+ORDER BY Degree DESC
+
+Houtwijk	18
+Landen	16
+Oostbroek-Zuid	16
+Kortenbos	16
+Laakkwartier-Oost	16
+Rond de Energiecentrale	16
+
+##HISTOGRAMA DEL GRAFO
+MATCH (n:Zone)-[r:Move_to]-()
+WITH n as Nodes, count(distinct r) as Degree
+RETURN Degree, Count(Nodes)
+ORDER BY Degree ASC
+
+Degree	Count(Nodes)
+1	236
+2	165
+3	78
+4	20
+5	10
+6	1
+7	1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ##################################CHECAR EL GRAFO DE TODAS LAS REGIONES CON TODA LA BASE, RELACIONADAS ENTRE ELLAS
