@@ -40,7 +40,7 @@ RETURN count(n)
 MATCH ()-[r]->()
 RETURN count(r)
 
-//Calcula el ex-grado de los nodos zona
+//Outdegrees vertex type: Zone
 MATCH (n:Zone)-[r:Move_to]->()
 RETURN n.Name as Node, count(r) as Outdegree
 ORDER BY Outdegree DESC
@@ -48,9 +48,9 @@ UNION
 MATCH (a:Zone)-[r:Move_to]->(leaf)
 WHERE not((leaf)-->())
 RETURN leaf.Name as Node, 0 as Outdegree
-//En el documento se muestra el top 5 mayor y menor
+//On the document it shows rank top 5 and last 5
 
-//Calcula el in-grado de los nodos zona
+//Indegrees vertex type: Zone
 MATCH (n:Zone)<-[r:Move_to]-()
 RETURN n.Name as Node, count(r) as Indegree
 ORDER BY Indegree DESC
@@ -58,20 +58,20 @@ UNION
 MATCH (a:Zone)<-[r:Move_to]-(root)
 WHERE not((root)<--())
 RETURN root.Name as Node, 0 as Indegree
-//En el documento se muestra el top 5 mayor y menor
+//On the document it shows rank top 5 and last 5
 
-//Calcula el grado total del los vertices
+//Total degrees vertex type: Zone
 MATCH (n:Zone)-[r:Move_to]-()
 RETURN n.Name, count(distinct r) as Degree
 ORDER BY Degree DESC
 
-//Histograma de los grados del grafo
+//Graph's degree Histogram
 MATCH (n:Zone)-[r:Move_to]-()
 WITH n as Nodes, count(distinct r) as Degree
 RETURN Degree, Count(Nodes)
 ORDER BY Degree ASC
 
-//Calcula el diametro del subgrafo en el que solo considera colonias
+//Calculate the diameter of the subgraph in which only considers colonies
 MATCH (z1:Zone),(z2:Zone)
 WHERE z1 <> z2
 WITH z1, z2
@@ -79,7 +79,7 @@ MATCH p=shortestPath((z1)-[r:Move_to*]->(z2))
 RETURN z1.Name, z2.Name, length(p)
 ORDER BY length(p) DESC LIMIT 1
 
-//A partir del diametro calcula los caminos más cortos entre esos nodos
+//Since we have the the diameter then all shortest paths
 MATCH p = allShortestPaths((n:Zone)-[r:Move_to*]-(m:Zone))
 WHERE n.Name='Archipelbuurt' AND m.Name = 'Transvaalkwartier-Midden'
 RETURN EXTRACT(n IN NODES(p)| n.Name) AS Paths
@@ -88,34 +88,36 @@ RETURN EXTRACT(n IN NODES(p)| n.Name) AS Paths
 ///////////////Análisis exploratorio del grafo///////////////
 
 
-//Muestra todas las relaciones
+//Show up all relations
 MATCH (o)-[:Belong]->(r)-[c:Crime]->(y) RETURN o,r,y
+//Image 1 in the document
 
-//Muestra todos los nodos cuya relación sea move_to ordenados por número de crímenes y delincuentas
+//Show up all edges which have move_to relation ordered
 MATCH (n:Zone)-[:Move_to*]->(m:Zone)
 RETURN n, m
 ORDER BY n.Crime DESC, n.Offenders DESC
 LIMIT 10
 //En el documento se muestran los 5 distintos
 
-//Muestra el top 10 de las relaciones donde hay mayor flujo de personas
+//Show up top 10 people movement
 MATCH (n:Zone)-[r:Move_to]->(m:Zone)
 WHERE n<>m
-RETURN n, m, r
+RETURN n.Name, r
 ORDER BY r.dist DESC, n.Crime DESC, n.Offenders DESC
 LIMIT 10
-//En el documento va la gráfica y el grafo
+//En el documento va la gráfica y el grafo, ya
 
-//Muestra relación de distritos con colonias para mostrar comunidad de nodos
+//Show up the relation zone belong to region, then to see communities 
 MATCH (n:Zone)-[r:Belong]->(m:Reg)
 WHERE n<>m
 RETURN n, m, r
 ORDER BY n.Crime DESC
 LIMIT 100
+//Is the second graph on the document
 
-//A la colonia donde se mueve más gente calculamos el algoritmo Dijsktra
-MATCH (n:Zone {Name:'Valkenboskwartier'}), (m:Zone),
-path = shortestPath((n)-[*]->(m))
+//Dijkstra's algorithm to the most influential zone
+MATCH (n:Zone {Name:'Kerketuinen/Zichtenburg'}), (m:Zone),
+path = shortestPath((n)-[:Move_to*]->(m))
 WITH REDUCE(dist = 0, rel in rels(path) | dist + toInt(rel.dist)) AS distance, path, n, m
 RETURN n, m, path, distance
 ORDER BY distance desc
