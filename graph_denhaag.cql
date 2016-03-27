@@ -117,7 +117,7 @@ LIMIT 100
 
 //Dijkstra's algorithm to the most influential zone
 MATCH (n:Zone {Name:'Kerketuinen/Zichtenburg'}), (m:Zone),
-path = shortestPath((n)-[:Move_to*]->(m))
+path = shortestPath((n:Zone)-[:Move_to*]->(m:Zone))
 WITH REDUCE(dist = 0, rel in rels(path) | dist + toInt(rel.dist)) AS distance, path, n, m
 RETURN n, m, path, distance
 ORDER BY distance desc
