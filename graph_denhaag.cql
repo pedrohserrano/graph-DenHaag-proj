@@ -65,7 +65,7 @@ MATCH (n:Zone)-[r:Move_to]-()
 RETURN n.Name, count(distinct r) as Degree
 ORDER BY Degree DESC
 
-//Graph's degree Histogram
+//Graphs degree Histogram
 MATCH (n:Zone)-[r:Move_to]-()
 WITH n as Nodes, count(distinct r) as Degree
 RETURN Degree, Count(Nodes)
@@ -115,7 +115,7 @@ ORDER BY n.Crime DESC
 LIMIT 100
 //Is the second graph on the document
 
-//Dijkstra's algorithm to the most influential zone
+//Dijkstras algorithm to the most influential zone
 MATCH (n:Zone {Name:'Kerketuinen/Zichtenburg'}), (m:Zone),
 path = shortestPath((n:Zone)-[:Move_to*]->(m:Zone))
 WITH REDUCE(dist = 0, rel in rels(path) | dist + toInt(rel.dist)) AS distance, path, n, m
