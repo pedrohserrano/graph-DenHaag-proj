@@ -19,13 +19,20 @@
 % The following packages can be found on http:\\www.ctan.org
 %\usepackage{graphics} % for pdf, bitmapped graphics files
 %\usepackage{epsfig} % for postscript graphics files
-%\usepackage{mathptmx} % assumes new font selection scheme installed
+\usepackage{mathptmx} % assumes new font selection scheme installed
 %\usepackage{times} % assumes new font selection scheme installed
-%\usepackage{amsmath} % assumes amsmath package installed
-%\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage{amsmath} % assumes amsmath package installed
+\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage{float}
+\usepackage{array}
+\usepackage[spanish]{babel}
+\usepackage{comment}
+\usepackage{graphicx}
+
 
 \title{\LARGE \bf
-Crimen en La Haya, Pa\'ises Bajos BLA BLA
+An\'alisis del crimen en La Haya, Pa\'ises Bajos: \\
+Aplicaci\'on de Teor\'ia de Grafos 
 }
 
 %\author{ \parbox{3 in}{\centering Huibert Kwakernaak*
@@ -59,68 +66,145 @@ Crimen en La Haya, Pa\'ises Bajos BLA BLA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-Este documento se analiz\'o
+En el presente documento se analiz\'o el crimen en la Haya a trav\'es de t\'ecnicas anal\'iticas utilizadas en teor\'ia de grafos. El objetivo principal del estudio fue el de caracterizar a las colonias de La Haya, Pa\'ises Bajos para conocer los flujos de reubicaci\'on de personas y hacer un primer acercamiento a su relaci\'on con el crimen. El análisis fue realizado con ayuda de Neo4j y Cypher Query Language. Con el uso de dichas herramientas y la exploraci\'on de datos se encontr\'o primeros indicios para explicar el cambio de residencia de las personas en colonias con m\'as interacciones con respecto a las dem\'as as\'i como la medida de criminalidad juega un papel indispensable pero no concluyente. 
 
 \end{abstract}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCI\'ON}
+\vspace{2mm}
+La descomposi\'on de las colonias conlleva consecuencias que afectan el nivel de vida de las personas e indirectamente aquejan a colonias cercanas. Una de las situaciones m\'as frecuentes por las cuales surge dicha descomposici\'on  son la delincuencia y el miedo o percepci\'on hacia la delincuencia, lo que puede desencadenar la reubicaci\'on como una medida de precauci\'on. En este contexto, surgen preguntas fundamentales;
 
-La descomposi\'on de las colonias conlleva consecuencias que afectan el nivel de vida de las personas e indirectamente aquejan a colonias cercanas. Una de las situaciones m\'as frecuentes por las cuales surge dicha descomposici\'on  son la delincuencia y el miedo o percepci\'on hacia la delincuencia, lo que puede desencadenar la reubicación como una medida de precaución. En este contexto, surge una pregunta fundamental; ¿Las personas se reubican en colonias con menor delincuencia?
+\begin{itemize}
+\item \textquestiondown Cu\'ales son las colonias que m\'as gente abandona?
+\item \textquestiondown Cu\'ales son las colonias donde se reubica m\'as la gente?
+\item \textquestiondown Cu\'ales son las colonias con mayor delincuencia?
+\item \textquestiondown Cu\'ales son los distritos que tienen m\'as influencia?
+\item \textquestiondown Las personas se reubican en sitios con menor grado de delincuencia?
+\end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{DATOS}
+\vspace{2mm}
 
 \subsection{Descripci\'on de los datos}
 
-En este an\'alisis se contruy\'o una base de datos de panel, considerando  las variables que pueden estar ligadas con la reubicaci\'on (migraci\'on interna). La base de datos se compone de los 114 colonias que constituyen la Haya en los Pa\'ises Bajos desde 2003 hasta 2009 (las cifras se ha extra\'ido de los documentos oficiales recopilados por el municipio de La Haya (Den Haag in cijfers, DHIC). La base de datos incluye diez grupos de variables: 
-
+Para este an\'alisis se contruy\'o una base de datos de panel, considerando  las variables que pueden estar ligadas con la reubicaci\'on (migraci\'on interna). Dicha base de datos se compone de las 114 colonias que constituyen la Haya en los Pa\'ises Bajos desde 2003 hasta 2009 (las cifras se han extra\'ido de los documentos oficiales recopilados por el municipio de La Haya (Den Haag in cijfers, DHIC). La base de datos incluye los siguientes grupos variables: 
+\vspace{2mm}
 \begin{enumerate}
 \item \textit{\textbf{Flujos de reubicaci\'on}}
-Los fujos de reubicaci\'on incluyen 114 colonias en la Haya, est\'a informaci\'on est\'a disponible para 7 años (2003-2009).
+Los fujos de reubicaci\'on incluyen 114 colonias en la Haya, est\'a informaci\'on est\'a disponible para 7 a\~nos (2003-2009).
+\vspace{2mm}
 \item \textit{\textbf{Crimen}}
 Estas variables se refieren a la informaci\'on reportada al Departamento de Polic\'ia. Por su naturaleza, las variables se dividieron en en dos grupos: 
 \begin{itemize}
 \item Crimen cometido directamente a personas (o crimen por violencia). Este tipo crimen incluye amenazas, maltrato y robo en las calles.
 \item Crimen a propiedad, el cual se compone po las variables robo de autom\'ovil, robo de objetos del autom\'ovil, robo en compañ\'ias o negocios, robo de mercanc\'ia en tiendas, robo de cartera y robo en casa-habitaci\'on.
 \end{itemize}
-
-\item \textit{\textbf{Atracciones}}
-Las atracciones consideradas
-
-\item \textit{\textbf{Educaci\'on}}
-
-\item \textit{\textbf{Empleo}}
-
-\item \textit{\textbf{Poblaci\'on}}
-
-\item \textit{\textbf{Bienes ra\'ices}}
-
+\vspace{2mm}
+\item \textit{\textbf{Colonias}}
+Las colonias que componen a la Haya.
+\vspace{2mm}
+\item \textit{\textbf{Criminales}}
+Esta variable se refiere al n\'umero de criminales ubicados en cada colonia.
+\vspace{2mm}
 \item \textit{\textbf{Distancia}}
-
-\item \textit{\textbf{Composici\'on \'Etnica}}
-
-\item \textit{\textbf{Ingreso}}
-
+Corresponde a la distancia entre el centroide de la colonia i a la colonia j.
 \end{enumerate}
+\subsection{Descripci\'on del Grafo}
+El grafo incluye 3 tipos de nodos vinculados con los datos anteriormente descritos. La composici\'on del grafo es de  804 nodos y 80,981 aristas.
 
-\subsection{Metodolog\'ia}
+\input{tipo_nodos}
 
-¿Las personas se reubican en colonias con menor delincuencia?
+Los nodos de color verde corresponden al a\~no, los amarillos a las colonia y los morados a los distritos.
 
-BLABLA
+De la misma manera, fueron tambi\'en definidas 3 tipos de relaciones. Dichas definiciones pueden observarse claramente en la Figura 1
 
-Se utilizar\'a 
+\input{tipo_relaciones}
+
+\begin{figure}[ht]
+\includegraphics[width=9cm]{graph_all.png}
+\caption{Representaci\'on gr\'afica de los datos}
+\label{tab:grafo}
+\end{figure}
+
+\section{METODOLOG\'IA}
+\vspace{2mm}
+
+\subsection{Herramientas}
+
+El análisis se realiz\'o a trav\'es de Neo4j, utilizando Cypher Query Language. La base de datos orientada a grafos $Neo4j$ posibilit\'o la visualizaci\'on de los datos en forma de nodos y relaciones. CQL por su parte permiti\'o la consulta y actualizaci\'on gr\'afica.
+
+\subsection{Conceptos}
+Con el fin de realizar un an\'alisis descriptivo de los datos y contestar las preguntas objetivo fueron utilizados algunos conceptos fundamentales encontrados en la Teor\'ia de grafos.
+
+Primero, para la descripci\'on del grafo se contaron el n\'umero de \textbf{nodos} $804$ as\'i como el n\'umero de \textbf{aristas} $80,981$, los cuales marcan las relaciones existentes en la base de datos. Posteriormente, fue realizada una exploraci\'on m\'as profunda por medio del c\'alculo de los \textbf{in-grados}, \textbf{ex-grados} y \textbf{total de grados}. Esto \'ultimo permiti\'o conocer las colonias con m\'as relaciones.
+
+Asimismo, se calcul\'o el \textbf{di\'ametro} del grafo con la finalidad de conocer la m\'axima \textbf{excentricidad} respecto a los nodos (camino m\'as largo) y as\'i el camino de m\'aximo peso tomando en cuenta las relaciones anteriormente descritas.
+
+Finalmente, fue implementado el \textbf{algoritmo Dijkstra}, que consiste en encontrar los caminos m\'as cortos a partir de un origen. Este algor\'itmo result\'o en las colonias a las que es m\'as sencillo reubicarse.
 
 \section{RESULTADOS}
+\vspace{2mm}
+Los nodos principales son los correspondientes a las colonias, ya que incluyen m\'as relaciones y permitir\'a contestar las preguntas objetivo de este an\'alisis. Considerando lo anterior se examinaron las caracter\'isticas de dichos nodos. El ex-grado por un lado indica que en $111$ colonias tuvieron habitantes que se reubicaron, mostrando $41,063$ interacciones. El in-grado muestra que solo en 4 colonias no hubo flujo poblacional, las cuales podr\'iamos clasificarlas como nodos $hoja$
 
-aqui el o los grafos
+\input{ex-grado}
 
+\input{in-grado}
 
+Las colonias con mayor in-grado fueron $Zeeheldenkwartier$ y $Valkenboskwartier$, lo que indica que se consideran como la primeras opciones de reubicaci\'on desde las dem\'as colonias.
+
+Por otro lado es curioso notar que dichas colonias son tabi\'en las que tienen mayor ex-grado, dicha observaci\'on hace sentido ya que ambas pertenecen al distrito central de la ciudad. 
+
+Es a\'un m\'as interesante observar los nodos ra\'iz y hoja, los cuales reflejan ex-grado e in-grado cero respectivmente, por lo que las colonias de $De Rivieren$, $Kerketuinen/Zichtenburg$, $Rietbuurt$, $Zuiderpark$ no hubo ning\'un desplazamiento en 8 a\~nos, esto solo hace suponer que se tratan de barrios con alto nivel en cuanto a calidad de vida o son zonas comerciales, o ambas en todo caso.
+
+El caso contrario son las colonias de $Rietbuurt$, $Vlietbuurt$, $Westvliet$ donde ninguna persona se mud\'o a esas colonias en todo el periodo, pero despu\'es de revisar la poblaci\'on resulta que la primera se convirti\'o en una zona industrial, pero no as\'i con las restantes, ya que tienen una taza alta de criminalidad con 342 y 360 cr\'imenes cometidos respectivamente
+
+Para tener un escenario completo se calcularon los grados totales del subgrafo comprendido por los nodos tipo colonia, y as\'i observar las colonias con m\'as y menos interacciones con las dem\'as
+
+\input{total_grados}
+
+En la siguiente imagen se observa el histograma de frecuencias de los grados en el grafo. Esta distribuci\'on indica el n\'umero de nodos con determinadas relaciones o aristas. En l\'inea general se puede describir como una funci\'on exponencial negativa, que muestra que la probabilidad de tener nodos con altas relaciones (de alto grado) es muy peque\~na. Con lo anterior se expone que existen pocas colonias \textit{"hub"} en la Haya para reubicaci\'on de personas.
+
+\textbf{PONER AQUI LA IMAGEN DE LA DIST DE LOS GRADOS}
+
+Despu\'es de calcular el di\'ametro del grafo, cuya medida corresponde al camino m\'as largo en el grafo sin considerar ciclos, notamos que de hecho tiene dos, aquel camino que va desde $Transvaalkwartier-Zuid$ hasta $Stadhoudersplantsoen$, as\'i como el que va desde $Archipelbuurt$ hasta $Transvaalkwartier-Midden$, a pesar de la complicada interacci\'on entre dichas colonias sigue en el aire si es debido al indice de criminalidad.
+
+En la tabla 6 se muestran las colonias con mayor nivel de criminalidad y criminales habitantando dichas zonas. 
+
+\input{mayor_crimen}
+
+Pero a pesar de las cifras de criminalidad, se observa que por ejemplo la colonia con mayor n\'umero de crimenes en la Haya s\'olo present\'o 75 casos reubicaci\'on de 2003 a 2009, lo anterior sugiere realizar un an\'alisis exploratorio para los vecindarios con mayor salida de personas y en donde el origen-destino de la reubicaci\'on no es el mismo.
+
+\input{tabla1}
+
+Basados en lo anterior, disponemos a relacionarlo con los distritos los que pertencen dichas colonias con mayor criminalidad. En la figura \ref{tab:reu_cri_crim} se observa que existen dos distritos centrales, a los cuales pertenecen colonias que tienen los niveles de crimen m\'as altos. Por un lado el Centro \textit{(Centrum)} 
+es el nodo que incluye más colonias, lo cual suigiere que este Distrito es el m\'as peligroso en la Haya. Por otra parte, el segundo Distrito con mayor delincuencia es \textit{Schildersbuurt-Oost}, que se encuentra adyacente a \textit{Centrum}.  
+
+\begin{figure}[ht]
+\includegraphics[width=9.5cm]{topcrime_belong1.png}
+\caption{Colonias con mayor reubicaci\'on, crimen y criminales: Top 10}
+\label{tab:reu_cri_crim}
+\end{figure}
+
+Intuitivamente, se infiere que la delincuencia tiende a concentrarse en el centro de las ciudades por las oportunidades que estas representan para los criminales (cantidad de personas, mercanc\'ia, entre otras), esta premisa se corrobor\'o en el grafo analizado.
+
+Es por ello entonces que se dispuso a ordenar por el tipo de arista $flujo$ (tabla 8) y de esta manera visualizar cuales son los caminos cr\'iticos por donde se lleva a cabo la migraci\'on interna.
+
+\input{top10_fcc}
+
+Resulta que la zona $Kerketuinen/Zichtenburg$ es la que mayor movimiento tiene, es decir que la arista es m\'as pesada con respecto a las dem\'as, aunque en terminos generales no podr\'iamos presumir de un patr\'on con respecto a la evaci\'on de la criminalidad. Adicionalmente a dicha colonia se le aplic\'o el algoritmo Dijkstra y encontrar sus caminos m\'as cortos. Podemos notarlo en la figura 3
+
+\begin{figure}[h]
+\includegraphics[width=9.5cm]{dijkstra.png}
+\caption{Rutas de reubicaci\'on de la colonia con mayor peso}
+\end{figure}
 
 \section{DISCUSI\'ON}
+\vspace{2mm}
+El an\'alisis realizado puede ser extendido de manera importante, ya que con los razonamientos anal\'iticos mostrados, se encontraron notables indicios sobre la migraci\'on interna de la ciudad, como \'areas de oportunidad se podr\'ia considerar, utilizar los nodos tipo a\~no para categorizar propiedades en las relaciones, comparar tambi\'en el movimiento nominal entre distritos, o en todo caso aplicar tambi\'en el algoritmo Dijkstra en variables externas como atracciones o edad de las personas en movimiento.
 
-El an\'alisis realizado puede ser extendido ....
+Es un problema muy interesante, ya que tiene los elementos necesarios para generalizarse, es decir medir la migraci\'on entre ciudades, estados o incluso paises, y encontrar as\'i los caminos cr\'iticos por donde se llevan a cabo los movimientos demogr\'aficos.
 
 
 
@@ -138,11 +222,9 @@ Appendixes should appear before the acknowledgment.
 
 \begin{thebibliography}{10}
 
-\bibitem{c1} G. O. Young, ÒSynthetic structure of industrial plastics (Book style with paper title and editor),Ó 	in Plastics, 2nd ed. vol. 3, J. Peters, Ed.  New York: McGraw-Hill, 1964, pp. 15Ð64.
-\bibitem{c2} W.-K. Chen, Linear Networks and Systems (Book style).	Belmont, CA: Wadsworth, 1993, pp. 123Ð135.
-\bibitem{c3} H. Poor, An Introduction to Signal Detection and Estimation.   New York: Springer-Verlag, 1985, ch. 4.
-\bibitem{c4} B. Smith, ÒAn approach to graphs of linear forms (Unpublished work style),Ó unpublished.
-
+\bibitem{c1} Daron Acemoglu and Asu Ozdaglar, Graph Theory and Social Networks, Lecture 2, MIT, September 14, 2009.
+\bibitem{c2} John Adrian Bondy, Graph Theory with Applications.	Mathermathics: Amsterdam, 1976.
+\bibitem{c3} Sonal Raj, Neo4j High Performance.	Packt Publishing, March 2015.
 \end{thebibliography}
 
 
