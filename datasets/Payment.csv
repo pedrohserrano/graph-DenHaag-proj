@@ -1,0 +1,18 @@
+Description,Key,Title
+,T000000,Total with / without payment
+"Persons receiving benefits under social security.
+
+Social security is the set of rules that are to assure continuity of labor and / or income.
+
+This table refers to all benefits under the social security related to disability, sickness and unemployment. These include benefits under the Disability Services Act Young people with disabilities (Wajong) (WW) and the Work and Benefits Act (WWB). Retirement benefits and benefits in the context of the General Nabestaandenwet (ANW) to be left out of consideration.
+
+This table is about 15 to 27 years young people somewhere in the month of October of the reference received compensation.
+",1000000,With social security benefits
+"Persons who receive benefits under social security.
+
+Social security is the set of rules that are to assure continuity of labor and / or income.
+
+This table refers to all benefits under the social security related to disability, sickness and unemployment. These include benefits under the Disability Services Act Young people with disabilities (Wajong) (WW) and the Work and Benefits Act (WWB). Retirement benefits and benefits in the context of the General Nabestaandenwet (ANW) to be left out of consideration.
+
+This table is about 15 to 27 years young people who do not receive payment in October of the reference year.
+",2000000,Without social security benefits
